@@ -1,0 +1,58 @@
+name: CI/CD to EKS via ArgoCD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-south-1
+      EKS_CLUSTER_NAME: react-node-cluster
+      BACKEND_IMAGE: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-backend
+      FRONTEND_IMAGE: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-frontend
+      COMMIT_SHA: ${{ github.sha }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | \
+          docker login --username AWS --password-stdin 882961514310.dkr.ecr.$AWS_REGION.amazonaws.com
+
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t backend ./backend
+          docker tag backend:latest $BACKEND_IMAGE:$COMMIT_SHA
+          docker push $BACKEND_IMAGE:$COMMIT_SHA
+
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t frontend ./frontend
+          docker tag frontend:latest $FRONTEND_IMAGE:$COMMIT_SHA
+          docker push $FRONTEND_IMAGE:$COMMIT_SHA
+
+      - name: Update image tags in Kubernetes manifests
+        run: |
+          sed -i "s|image: $BACKEND_IMAGE:.*|image: $BACKEND_IMAGE:$COMMIT_SHA|" k8s/backend-deployment.yaml
+          sed -i "s|image: $FRONTEND_IMAGE:.*|image: $FRONTEND_IMAGE:$COMMIT_SHA|" k8s/frontend-deployment.yaml
+
+      - name: Commit and push updated manifests
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add k8s/
+          git commit -m "Update image tags to $COMMIT_SHA"
+          git push origin master
