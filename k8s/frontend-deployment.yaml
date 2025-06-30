@@ -28,6 +28,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-frontend:c1b2b369f8cda28f6ed70fe34ea76a51b8460520
+          image: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-frontend:2b984ba66606ba59a1a566682ea177e752a10b8b
           ports:
             - containerPort: 80
