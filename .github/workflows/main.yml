@@ -1,4 +1,4 @@
-name: CI/CD to EKS via ArgoCD
+name: CI/CD to EKS via ArgoCD.
 
 on:
   push:
