@@ -29,9 +29,9 @@ spec:
           image: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-backend:3d9948c8e72efbfbc19a044c29675f5a010b2d10
           ports:
             - containerPort: 3000
-          env:
+          envFrom:
             - configMapRef:
-              name: react-config
+                name: react-config
             - secretRef:
-              name: db-secret
+                name: db-secret
 
