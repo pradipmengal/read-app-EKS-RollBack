@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: react-config
 data:
-  DBHOST: mysql
+  DB_HOST: mysql
   DB_PORT: "3306"
   DB_NAME: appdb
