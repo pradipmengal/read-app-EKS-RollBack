@@ -30,11 +30,8 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: DB_HOST
-              value: mysql
-            - name: DB_USER
-              value: root
-            - name: DB_PASSWORD
-              value: pass123
-            - name: DB_NAME
-              value: appdb
+            - configMapRef:
+              name: react-config
+            - secretRef:
+              name: db-secret
+
