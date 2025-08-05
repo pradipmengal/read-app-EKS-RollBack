@@ -11,7 +11,7 @@ jobs:
 
     env:
       AWS_REGION: ap-south-1
-      EKS_CLUSTER_NAME: react-node-cluster
+      EKS_CLUSTER_NAME: react-node-cluster2
       BACKEND_IMAGE: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-backend
       FRONTEND_IMAGE: 882961514310.dkr.ecr.ap-south-1.amazonaws.com/react-node-frontend
       COMMIT_SHA: ${{ github.sha }}
